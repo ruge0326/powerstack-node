@@ -7,6 +7,8 @@
   "author": "blockmatic.io",
   "license": "MIT",
   "scripts": {
+    "sync:models": "npx prisma introspect",
+    "sync": "npx prisma generate",
     "dev": "ts-node-dev --no-deps --no-notify --respawn src/index",
     "start": "node ./dist",
     "build": "tsc -b",
@@ -32,10 +34,13 @@
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
     "prettier": "^2.4.0",
+    "prisma": "^3.11.1",
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "@prisma/client": "^3.11.1",
     "env-var": "^7.0.1",
+    "express": "^4.17.3",
     "tslog": "^3.2.2"
   }
 }

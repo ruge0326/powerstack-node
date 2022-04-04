@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model employee_type {
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model employment_type {
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model global_stats {
+  overall_tokens     Decimal  @default(0) @db.Decimal
+  monthly_tokens     Decimal  @default(0) @db.Decimal
+  extra_tokens       Decimal  @default(0) @db.Decimal
+  updated_at         DateTime @default(now()) @db.Timestamptz(6)
+  token              String   @id
+  initial_allocation Decimal  @default(0) @db.Decimal
+}
+
+model monthly_batch_quantities {
+  id                 Int             @id @default(autoincrement())
+  seniority_level_id Int
+  created_at         DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime        @default(now()) @db.Timestamptz(6)
+  created_by         String          @default("admin")
+  quantity           Int             @default(0)
+  updated_by         String          @default("admin")
+  year               Int
+  month              Int
+  is_active          Boolean         @default(true)
+  seniority_level    seniority_level @relation(fields: [seniority_level_id], references: [id], onUpdate: Restrict)
+}
+
+model monthly_report {
+  id                     Int      @id @default(autoincrement())
+  overall_tokens         Int      @default(0)
+  monthly_batch          Int      @default(0)
+  current_holders_count  Int      @default(0)
+  report_date            DateTime @default(now()) @db.Date
+  previous_holders_count Int      @default(0)
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime @default(now()) @db.Timestamptz(6)
+  year                   Int?
+  month                  Int?
+}
+
+model seniority_level {
+  id                       Int                        @id @default(autoincrement())
+  code                     String
+  global_category          String
+  created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                   @default(now()) @db.Timestamptz(6)
+  weight                   Int                        @default(1)
+  monthly_batch_quantities monthly_batch_quantities[]
+  token_holder             token_holder[]
+}
+
+model token_holder {
+  id                       Int                  @id @default(autoincrement())
+  first_name               String
+  last_name                String
+  middle_name              String?
+  employee_id              String?
+  email                    String?              @unique
+  start_date               DateTime?            @db.Date
+  initial_token_allocation Int                  @default(0)
+  extra_token_allocation   Int?                 @default(0)
+  seniority_level_id       Int?
+  is_active                Boolean?             @default(true)
+  monthly_token_allocation Int?                 @default(0)
+  location                 String?
+  is_full_time_employee    Boolean?             @default(true)
+  is_contractor_employee   Boolean?             @default(false)
+  position                 String?
+  secret                   String?
+  picture_url              String?
+  sub                      String?
+  created_at               DateTime?            @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime?            @default(now()) @db.Timestamptz(6)
+  seniority_level          seniority_level?     @relation(fields: [seniority_level_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  token_transactions       token_transactions[]
+}
+
+model token_transaction_type {
+  id                 Int                  @id @default(autoincrement())
+  type               String               @unique
+  token_transactions token_transactions[]
+}
+
+model token_transactions {
+  id                     Int                    @id(map: "transactions_pkey") @default(autoincrement())
+  amount                 Decimal                @default(0) @db.Decimal
+  transaction_type_id    Int
+  created_at             DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime               @default(now()) @db.Timestamptz(6)
+  description            String?
+  notes                  String?
+  token_holder_id        Int?
+  token_holder           token_holder?          @relation(fields: [token_holder_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  token_transaction_type token_transaction_type @relation(fields: [transaction_type_id], references: [id], onUpdate: Restrict, map: "token_transactions_transaction_type_fkey")
+}

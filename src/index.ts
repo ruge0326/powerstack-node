@@ -1,11 +1,18 @@
-import * as http from 'http'
+import express from 'express'
 import { config } from './config'
-import { log } from './utils/logger'
+import { routes } from './routes'
+import { log } from './library/logger'
 
-const server = http.createServer((_req, res) => {
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'text/plain')
-  res.end('Hello World')
-})
+const app = express()
+app.use(express.json())
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+)
 
-server.listen(config.port, config.hostname, () => log.info(`Server running at http://${config.hostname}:${config.port}/`))
+app.use('/', routes)
+
+const port = Number(config.port || 3000)
+
+app.listen(port, '0.0.0.0', () => log.info(`Server running at http://0.0.0.0:${port}`))
