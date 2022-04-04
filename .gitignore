@@ -4,3 +4,4 @@ node_modules/
 *.log
 .env
 key.json
+.DS_Store
