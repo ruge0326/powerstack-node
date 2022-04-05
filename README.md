@@ -107,7 +107,9 @@ gcloud iam service-accounts keys create key.json \
     --iam-account $ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com
 ```
 
-9. Set up Github Secrets
+9. Set up [Github Secrets](https://cloud.google.com/community/tutorials/cicd-cloud-run-github-actions)
+
+10. Set env vars on [Google Cloud Run](https://cloud.google.com/run/docs/configuring/environment-variables#console)
 
 ## Contributing
 

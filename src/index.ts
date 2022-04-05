@@ -13,6 +13,7 @@ app.use(
 
 app.use('/', routes)
 
-const port = Number(config.port || 3000)
+const port = Number(config.port)
+const hostname = config.hostname
 
-app.listen(port, '0.0.0.0', () => log.info(`Server running at http://0.0.0.0:${port}`))
+app.listen(port, hostname, () => log.info(`Server running at http://${hostname}:${port}`))
